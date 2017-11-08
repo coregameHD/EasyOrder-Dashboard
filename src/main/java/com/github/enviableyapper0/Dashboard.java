@@ -97,6 +97,11 @@ public class Dashboard {
 
     public void deleteOrder() {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+        if (model.getRowCount() == 0) {
+            return;
+        }
+
         int idToDelete = (Integer) model.getValueAt(0, 0);
         dao.deleteOrder(idToDelete);
         while (((Integer) model.getValueAt(0,0)) == idToDelete) {
