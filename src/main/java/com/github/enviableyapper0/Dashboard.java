@@ -16,13 +16,14 @@ import java.net.URI;
 
 public class Dashboard {
     private class SpaceListener implements KeyListener {
+        private final static int spaceKeyCode = 32;
+
         @Override
         public void keyTyped(KeyEvent e) { }
 
         @Override
         public void keyPressed(KeyEvent e) {
-            System.out.println("Key press: " + e.getKeyCode());
-            if (e.getKeyCode() == 32) {
+            if (e.getKeyCode() == spaceKeyCode) {
                 Dashboard.this.deleteOrder();
             }
         }
@@ -94,6 +95,15 @@ public class Dashboard {
         }
     }
 
+    public void deleteOrder() {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        int idToDelete = (Integer) model.getValueAt(0, 0);
+        dao.deleteOrder(idToDelete);
+        while (((Integer) model.getValueAt(0,0)) == idToDelete) {
+            model.removeRow(0);
+        }
+    }
+
     public static void main(String[] args) {
         Dashboard dashboard = new Dashboard(getBaseURI(args));
         dashboard.root.setVisible(true);
@@ -104,14 +114,5 @@ public class Dashboard {
             return UriBuilder.fromUri("http://localhost:8080/").build();
         else
             return UriBuilder.fromUri("http://" + args[1] + ":8080/").build();
-    }
-
-    public void deleteOrder() {
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-        int idToDelete = (Integer) model.getValueAt(0, 0);
-        dao.deleteOrder(idToDelete);
-        while (((Integer) model.getValueAt(0,0)) == idToDelete) {
-            model.removeRow(0);
-        }
     }
 }
