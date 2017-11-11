@@ -116,7 +116,7 @@ public class Dashboard {
 
     private static URI getBaseURI(String[] args) {
         if (args.length == 0)
-            return UriBuilder.fromUri("http://localhost:8080/").build();
+            return UriBuilder.fromUri("http://0.0.0.0:8080/").build();
         else
             return UriBuilder.fromUri("http://" + args[1] + ":8080/").build();
     }
