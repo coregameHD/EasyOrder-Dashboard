@@ -27,4 +27,8 @@ public class OrderDashboardDAO {
     public void deleteOrder(int orderId) {
         target.path("order").path(Integer.toString(orderId)).request().delete();
     }
+
+    public void deleteIndividualFoodItem(int orderId, int foodIndex) {
+        target.path("order").path(Integer.toString(orderId)).path(Integer.toString(foodIndex)).request().delete();
+    }
 }
