@@ -5,6 +5,7 @@ import com.github.enviableyapper0.beans.Order;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 import javax.ws.rs.core.UriBuilder;
 import java.awt.*;
@@ -46,9 +47,10 @@ public class Dashboard {
 
         root = new JFrame("EasyOrder Dashboard");
         root.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        root.setPreferredSize(new Dimension(1000, 1000));
+        root.setPreferredSize(new Dimension(1366, 768));
 
         table = new JTable();
+        tableDecoration();
         setTableColumnHeader();
         updateTableModel();
         scrollPane = new JScrollPane(table);
@@ -73,7 +75,7 @@ public class Dashboard {
         DefaultTableModel model = ((DefaultTableModel)table.getModel());
 
         model.setColumnCount(3);
-        model.setColumnIdentifiers(new Object[]{"Order Id", "Food", "Table Number"});
+        model.setColumnIdentifiers(new Object[]{"Order ID", "Food", "Table Number"});
     }
 
     private void updateTableModel() {
@@ -93,6 +95,14 @@ public class Dashboard {
         for (int i = model.getRowCount() - 1; i >= rowIndex; i--) {
             model.removeRow(i);
         }
+    }
+
+    private void tableDecoration(){
+        Color teal500 = new Color(0, 150, 136);
+
+        JTableHeader header = table.getTableHeader();
+        header.setBackground(teal500);
+        header.setForeground(Color.white);
     }
 
     public void deleteOrder() {
