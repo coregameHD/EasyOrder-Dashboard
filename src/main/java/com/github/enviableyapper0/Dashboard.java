@@ -4,6 +4,7 @@ import com.github.enviableyapper0.beans.FoodItem;
 import com.github.enviableyapper0.beans.Order;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
@@ -50,6 +51,11 @@ public class Dashboard {
         root.setPreferredSize(new Dimension(1366, 768));
 
         table = new JTable();
+        table.setFont(new Font("Verdana", Font.PLAIN, 24));
+        table.setRowHeight(table.getRowHeight() + 12);
+
+
+
         tableDecoration();
         setTableColumnHeader();
         updateTableModel();
@@ -57,6 +63,12 @@ public class Dashboard {
         table.setFillsViewportHeight(true);
         table.setDefaultEditor(Object.class, null);
         table.addKeyListener(new SpaceListener());
+
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment( JLabel.CENTER );
+        table.getColumnModel().getColumn(0).setCellRenderer( centerRenderer );
+        table.getColumnModel().getColumn(2).setCellRenderer( centerRenderer );
+        table.getColumnModel().getColumn(3).setCellRenderer( centerRenderer );
 
         root.add(scrollPane);
         root.pack();
@@ -74,8 +86,8 @@ public class Dashboard {
         TableColumnModel tableColumnModel = table.getColumnModel();
         DefaultTableModel model = ((DefaultTableModel)table.getModel());
 
-        model.setColumnCount(3);
-        model.setColumnIdentifiers(new Object[]{"Order ID", "Food", "Table Number"});
+        model.setColumnCount(4);
+        model.setColumnIdentifiers(new Object[]{"Order ID", "Food", "Quantity", "Table Number"});
     }
 
     private void updateTableModel() {
@@ -84,10 +96,11 @@ public class Dashboard {
         int rowIndex = 0;
         for (Order order : dao.getAllOrder()) {
             for (FoodItem foodItem : order.getFoods()) {
-                Object[] column = new Object[3];
+                Object[] column = new Object[4];
                 column[0] = order.getId();
                 column[1] = foodItem.getName();
-                column[2] = order.getTableNum();
+                column[2] = foodItem.getQuantity();
+                column[3] = order.getTableNum();
                 model.insertRow(rowIndex++, column);
             }
         }
@@ -103,6 +116,7 @@ public class Dashboard {
         JTableHeader header = table.getTableHeader();
         header.setBackground(teal500);
         header.setForeground(Color.white);
+        header.setFont(new Font("Verdana", Font.BOLD, 26));
     }
 
     public void deleteOrder() {
