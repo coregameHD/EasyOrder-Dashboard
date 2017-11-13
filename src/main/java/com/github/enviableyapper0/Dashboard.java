@@ -44,7 +44,7 @@ public class Dashboard {
     public Dashboard(URI baseURI) {
         this.dao = new OrderDashboardDAO(baseURI);
 
-        root = new JFrame("Quick and Dirty Order Management Dashboard");
+        root = new JFrame("EasyOrder Dashboard");
         root.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         root.setPreferredSize(new Dimension(1000, 1000));
 
