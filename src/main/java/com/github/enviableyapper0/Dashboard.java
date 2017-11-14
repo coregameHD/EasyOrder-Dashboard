@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.net.URI;
+import java.util.ArrayList;
 
 public class Dashboard {
     private class SpaceListener implements KeyListener {
@@ -40,6 +41,7 @@ public class Dashboard {
 
     private JFrame root;
     private JTable table;
+    private JPanel quickView;
     private JScrollPane scrollPane;
     private Timer timer;
 
@@ -51,10 +53,8 @@ public class Dashboard {
         root.setPreferredSize(new Dimension(1366, 768));
 
         table = new JTable();
-        table.setFont(new Font("Verdana", Font.PLAIN, 24));
+        table.setFont(new Font("Tahoma", Font.PLAIN, 24));
         table.setRowHeight(table.getRowHeight() + 12);
-
-
 
         tableDecoration();
         setTableColumnHeader();
@@ -70,7 +70,34 @@ public class Dashboard {
         table.getColumnModel().getColumn(2).setCellRenderer( centerRenderer );
         table.getColumnModel().getColumn(3).setCellRenderer( centerRenderer );
 
+        quickView = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        quickView.setBackground(new Color(0, 150, 136));
+        quickView.setSize(1366, 500);
+        JLabel servingText = new JLabel("[Preparing Table]     ");
+        servingText.setFont(new Font("Verdana", Font.BOLD,42));
+        servingText.setForeground(Color.white);
+
+        quickView.add(servingText, BorderLayout.WEST);
+        Dimension buttonSize = new Dimension(100, 100);
+
+        ArrayList<String> preparingList = new ArrayList<>();
+        for (Order order: dao.getAllOrder()){
+            preparingList.add(Integer.toString(order.getTableNum()));
+            //quickView.add(new JButton(Integer.toString(order.getTableNum())));
+        }
+
+        JLabel leftoverTable = new JLabel();
+        for (String s: preparingList){
+            JLabel b = new JLabel(s + "  ");
+            b.setFont(new Font("Verdana", Font.BOLD,100));
+            b.setForeground(Color.yellow);
+            quickView.add(b, BorderLayout.WEST);
+        }
+        //quickView.add(clickmeButton);
+
+
         root.add(scrollPane);
+        root.add(quickView,BorderLayout.NORTH);
         root.pack();
 
         timer = new Timer(fiveSecond, new ActionListener() {
@@ -80,6 +107,7 @@ public class Dashboard {
             }
         });
         timer.start();
+
     }
 
     private void setTableColumnHeader() {
@@ -114,8 +142,8 @@ public class Dashboard {
         Color teal500 = new Color(0, 150, 136);
 
         JTableHeader header = table.getTableHeader();
-        header.setBackground(teal500);
-        header.setForeground(Color.white);
+        //header.setBackground(teal500);
+        //header.setForeground(Color.white);
         header.setFont(new Font("Verdana", Font.BOLD, 26));
     }
 
