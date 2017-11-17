@@ -123,7 +123,7 @@ public class Dashboard {
 
         int rowIndex = 0;
         for (Order order : dao.getAllOrder()) {
-            for (FoodItem foodItem : order.getFoods()) {
+            for (FoodItem foodItem : order.getFoodItems()) {
                 Object[] column = new Object[4];
                 column[0] = order.getId();
                 column[1] = foodItem.getName();
