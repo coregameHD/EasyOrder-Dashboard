@@ -45,6 +45,7 @@ public class Dashboard {
     private JScrollPane scrollPane;
     private Timer timer;
 
+    // UI v2
     public Dashboard(URI baseURI) {
         this.dao = new OrderDashboardDAO(baseURI);
 
