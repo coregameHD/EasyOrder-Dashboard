@@ -18,19 +18,19 @@ import java.util.Arrays;
 public class Dashboard {
     private class SpaceListener implements KeyListener {
         private final static int spaceKeyCode = 32;
+        private final static int deleteKeyCode = 46;
 
         @Override
         public void keyTyped(KeyEvent e) { }
 
         @Override
         public void keyPressed(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            if (e.getKeyCode() == spaceKeyCode) {
                 Dashboard.this.deleteIndividualFoodItem();
             }
-            if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+            else if (e.getKeyCode() == deleteKeyCode) {
                 Dashboard.this.deleteOrder();
             }
-
         }
 
         @Override
@@ -70,7 +70,8 @@ public class Dashboard {
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         root.setLocation(dim.width/2-root.getSize().width/2, dim.height/2-root.getSize().height/2);
 
-
+        ImageIcon img = new ImageIcon("C:\\Users\\Coregame\\IdeaProjects\\EasyOrderDashboard\\src\\main\\res\\dashboard.png");
+        root.setIconImage(img.getImage());
 
         // Status Bar
         statusBarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -269,8 +270,8 @@ public class Dashboard {
 
     // Helper
     private void updateFoodIndexArray(int OuterArrayIndex){
-        if (!foodIndexArray.get(OuterArrayIndex).isEmpty()){
-            int limit = foodIndexArray.get(OuterArrayIndex).size();
+        int limit = foodIndexArray.get(OuterArrayIndex).size();
+        if (limit > 1){
             for (int i = 0; i < limit; i++){
                 foodIndexArray.get(OuterArrayIndex).set(i, i);
             }
