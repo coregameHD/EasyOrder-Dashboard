@@ -24,9 +24,13 @@ public class Dashboard {
 
         @Override
         public void keyPressed(KeyEvent e) {
-            if (e.getKeyCode() == spaceKeyCode) {
+            if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                Dashboard.this.deleteIndividualFoodItem();
+            }
+            if (e.getKeyCode() == KeyEvent.VK_DELETE) {
                 Dashboard.this.deleteOrder();
             }
+
         }
 
         @Override
@@ -136,7 +140,7 @@ public class Dashboard {
                 column[0] = order.getId();
                 column[1] = order.getTableNum();
                 column[2] = count + ". " + foodItem.getName();
-                column[3] = "x" + foodItem.getQuantity();
+                column[3] = "x " + foodItem.getQuantity();
                 model.insertRow(rowIndex++, column);
 
                 foodItemsIndexList.add(count - 1);
@@ -217,8 +221,10 @@ public class Dashboard {
         }
 
         final int idToDelete = (Integer) model.getValueAt(table.getSelectedRow(), 0);
-        dao.deleteOrder(idToDelete);
         int indexToRemove = remainingID.indexOf(idToDelete);
+
+        dao.deleteOrder(idToDelete);
+
         remainingList.remove(indexToRemove);
         remainingID.remove(indexToRemove);
         foodIndexArray.remove(indexToRemove);
@@ -238,11 +244,38 @@ public class Dashboard {
         }
 
         final int idToDelete = (Integer) model.getValueAt(table.getSelectedRow(), 0);
-        int foodIndex = 1;
+        int indexToRemove = remainingID.indexOf(idToDelete);
+
+
+        int foodIndex = 0;
         dao.deleteIndividualFoodItem(idToDelete, foodIndex);
+
+        foodIndexArray.get(indexToRemove).remove(foodIndex);
+
+        if (foodIndexArray.get(indexToRemove).isEmpty()){
+            remainingList.remove(indexToRemove);
+            remainingID.remove(indexToRemove);
+            foodIndexArray.remove(indexToRemove);
+
+            updateRemainingHeaderPanel();
+        }
+
+        updateFoodIndexArray(indexToRemove);
+
         while (((Integer) model.getValueAt(0,0)) == idToDelete) {
             model.removeRow(0);
         }
+    }
+
+    // Helper
+    private void updateFoodIndexArray(int OuterArrayIndex){
+        if (!foodIndexArray.get(OuterArrayIndex).isEmpty()){
+            int limit = foodIndexArray.get(OuterArrayIndex).size();
+            for (int i = 0; i < limit; i++){
+                foodIndexArray.get(OuterArrayIndex).set(i, i);
+            }
+        }
+
     }
 
     public static void main(String[] args) {
