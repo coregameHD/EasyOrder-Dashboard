@@ -254,8 +254,6 @@ public class Dashboard {
                 allItems.add(i);
             }
         }
-        int beforePos = table.getRowCount() - table.getSelectedRow();
-        System.out.println(beforePos);
 
         int count = 0;
         for (int i = 0; i < indexToRemove; i++){
@@ -276,6 +274,7 @@ public class Dashboard {
         }
 
         updateFoodIndexArray(indexToRemove);
+        updateTableModel();
 
         while (((Integer) model.getValueAt(0,0)) == idToDelete) {
             model.removeRow(0);
