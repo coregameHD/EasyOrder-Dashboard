@@ -16,6 +16,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+// @todo clean code
+// @todo comments
+
 public class Dashboard {
     private class SpaceListener implements KeyListener {
         private final static int spaceKeyCode = 32;
