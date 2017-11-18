@@ -54,7 +54,7 @@ public class Dashboard {
             return output;
         }
     };
-    private ArrayList<int[]> foodIndexArray = new ArrayList<>();
+    private ArrayList<ArrayList<Integer>> foodIndexArray = new ArrayList<>();
 
     public Dashboard(URI baseURI) {
         this.dao = new OrderDashboardDAO(baseURI);
@@ -128,7 +128,8 @@ public class Dashboard {
         DefaultTableModel model = ((DefaultTableModel) table.getModel());
         int rowIndex = 0;
         int count = 1;
-        int[] foodIndexTempArray = new int[20];
+        ArrayList<Integer> foodItemsIndexList = new ArrayList<>();
+
         for (Order order : dao.getAllOrder()) {
             for (FoodItem foodItem : order.getFoodItems()) {
                 Object[] column = new Object[4];
@@ -137,7 +138,8 @@ public class Dashboard {
                 column[2] = count + ". " + foodItem.getName();
                 column[3] = "x" + foodItem.getQuantity();
                 model.insertRow(rowIndex++, column);
-                foodIndexTempArray[count-1] = count-1;
+
+                foodItemsIndexList.add(count - 1);
                 count++;
             }
 
@@ -146,23 +148,18 @@ public class Dashboard {
             if (!remainingList.contains(currentTableNum)){
                 remainingList.add(currentTableNum);
                 remainingID.add(order.getId());
-                foodIndexArray.add(foodIndexTempArray);
-
-                //foodIndexTempArray.clear();
+                foodIndexArray.add(foodItemsIndexList);
             }
+
             // Reset counter
             count = 1;
-            foodIndexTempArray = new int[foodIndexTempArray.length];
+            foodItemsIndexList = new ArrayList<>();
 
         }
         System.out.println("TableNum: " + remainingList);
         System.out.println("Order ID: " + remainingID);
-        System.out.println("Temp Array: " + Arrays.toString(foodIndexTempArray));
         System.out.println("Food Index: " + foodIndexArray);
 
-        for (int[] item: foodIndexArray){
-            System.out.println(Arrays.toString(item) + "\t");
-        }
         System.out.println("==========");
 
 
