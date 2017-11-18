@@ -40,10 +40,12 @@ public class Dashboard {
     private JTable table;
     private JPanel remainingHeaderPanel;
     private JPanel statusBarPanel;
+    private JLabel remainingTableLabel = new JLabel();
     private JScrollPane scrollPane;
     private Timer timer;
     private Color teal500 = new Color(0, 150, 136);
     private ArrayList<String> remainingList = new ArrayList<>();
+    private ArrayList<Integer> remainingID = new ArrayList<>();
 
     // UI v2
     public Dashboard(URI baseURI) {
@@ -73,24 +75,14 @@ public class Dashboard {
         // Remaining Header Panel
         remainingHeaderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         remainingHeaderPanelDecoration();
+        remainingTableLabel.setText(remainingList.toString());
+        remainingTableLabel.setFont(new Font("Verdana", Font.BOLD, 100));
+        remainingTableLabel.setForeground(Color.yellow);
+        remainingHeaderPanel.add(remainingTableLabel, BorderLayout.WEST);
 
         /*for (Order order: dao.getAllOrder()){
             remainingList.add(Integer.toString(order.getTableNum()));
         }*/
-
-        /*for (String s: remainingList){
-            JLabel remainTable = new JLabel(s + "  ");
-            remainTable.setFont(new Font("Verdana", Font.BOLD,100));
-            remainTable.setForeground(Color.yellow);
-            remainingHeaderPanel.add(remainTable, BorderLayout.WEST);
-        }*/
-
-        for (String s: remainingList){
-            JLabel remainTable = new JLabel(s + "  ");
-            remainTable.setFont(new Font("Verdana", Font.BOLD,100));
-            remainTable.setForeground(Color.yellow);
-            remainingHeaderPanel.add(remainTable, BorderLayout.WEST);
-        }
 
         root.add(statusBarPanel, BorderLayout.SOUTH);
         root.add(scrollPane);
@@ -108,7 +100,7 @@ public class Dashboard {
 
     private void setTableColumnHeader() {
         TableColumnModel tableColumnModel = table.getColumnModel();
-        DefaultTableModel model = ((DefaultTableModel)table.getModel());
+        DefaultTableModel model = ((DefaultTableModel) table.getModel());
         model.setColumnCount(4);
         model.setColumnIdentifiers(new Object[]{"Order ID", "Table Number", "Food", "Quantity"});
 
@@ -120,7 +112,7 @@ public class Dashboard {
     }
 
     private void updateTableModel() {
-        DefaultTableModel model = ((DefaultTableModel)table.getModel());
+        DefaultTableModel model = ((DefaultTableModel) table.getModel());
 
         int rowIndex = 0;
         for (Order order : dao.getAllOrder()) {
@@ -132,8 +124,15 @@ public class Dashboard {
                 column[3] = foodItem.getQuantity();
                 model.insertRow(rowIndex++, column);
             }
-            remainingList.add(Integer.toString(order.getTableNum()));
+            String currTableNum = Integer.toString(order.getTableNum());
+            if (!remainingList.contains(currTableNum)){
+                remainingList.add(currTableNum);
+                remainingID.add(order.getId());
+            }
         }
+        System.out.println("TableNum: " + remainingList);
+        System.out.println("Order ID: " + remainingID);
+        remainingTableLabel.setText(remainingList.toString());
 
         for (int i = model.getRowCount() - 1; i >= rowIndex; i--) {
             model.removeRow(i);
@@ -144,10 +143,7 @@ public class Dashboard {
     private void tableDecoration(){
         table.setFont(new Font("Tahoma", Font.PLAIN, 24));
         table.setRowHeight(table.getRowHeight() + 12);
-
         JTableHeader header = table.getTableHeader();
-        //header.setBackground(teal500);
-        //header.setForeground(Color.white);
         header.setFont(new Font("Verdana", Font.BOLD, 26));
     }
 
@@ -172,6 +168,7 @@ public class Dashboard {
         servingText.setFont(new Font("Verdana", Font.BOLD,42));
         servingText.setForeground(Color.white);
         remainingHeaderPanel.add(servingText, BorderLayout.WEST);
+
     }
 
     private void deleteOrder() {
@@ -181,8 +178,28 @@ public class Dashboard {
             return;
         }
 
-        int idToDelete = (Integer) model.getValueAt(0, 0);
+        final int idToDelete = (Integer) model.getValueAt(0, 0);
         dao.deleteOrder(idToDelete);
+        int indexToRemove = remainingID.indexOf(idToDelete);
+        remainingList.remove(indexToRemove);
+        remainingID.remove(indexToRemove);
+        remainingTableLabel.setText(remainingList.toString());
+
+        while (((Integer) model.getValueAt(0,0)) == idToDelete) {
+            model.removeRow(0);
+        }
+    }
+
+    public void deleteIndividualFoodItem(){
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+        if (model.getRowCount() == 0) {
+            return;
+        }
+
+        int idToDelete = (Integer) model.getValueAt(0, 0);
+        int foodIndex = 1;
+        dao.deleteIndividualFoodItem(idToDelete, foodIndex);
         while (((Integer) model.getValueAt(0,0)) == idToDelete) {
             model.removeRow(0);
         }
