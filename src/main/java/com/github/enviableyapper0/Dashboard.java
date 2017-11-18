@@ -51,6 +51,9 @@ public class Dashboard {
         root = new JFrame("EasyOrder Dashboard");
         root.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         root.setPreferredSize(new Dimension(1366, 768));
+        root.setMinimumSize(new Dimension(1366, 768));
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        root.setLocation(dim.width/2-root.getSize().width/2, dim.height/2-root.getSize().height/2);
 
         table = new JTable();
         table.setFont(new Font("Tahoma", Font.PLAIN, 24));
