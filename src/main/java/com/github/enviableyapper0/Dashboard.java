@@ -32,8 +32,7 @@ public class Dashboard {
         public void keyReleased(KeyEvent e) { }
     }
 
-    final static int fiveSecond = 5000;
-
+    private final static int fiveSecond = 5000;
     private OrderDashboardDAO dao;
 
     private JFrame root;
@@ -44,10 +43,17 @@ public class Dashboard {
     private JScrollPane scrollPane;
     private Timer timer;
     private Color teal500 = new Color(0, 150, 136);
-    private ArrayList<String> remainingList = new ArrayList<>();
-    private ArrayList<Integer> remainingID = new ArrayList<>();
 
-    // UI v2
+    private ArrayList<Integer> remainingID = new ArrayList<>();
+    private ArrayList<String> remainingList = new ArrayList<String>(){
+        @Override
+        public String toString() {
+            String output = "";
+            for (String s : this) output += s + "  ";
+            return output;
+        }
+    };
+
     public Dashboard(URI baseURI) {
         this.dao = new OrderDashboardDAO(baseURI);
 
@@ -75,7 +81,7 @@ public class Dashboard {
         // Remaining Header Panel
         remainingHeaderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         remainingHeaderPanelDecoration();
-        remainingTableLabel.setText(remainingList.toString());
+        updateRemainingHeaderPanel();
         remainingTableLabel.setFont(new Font("Verdana", Font.BOLD, 100));
         remainingTableLabel.setForeground(Color.yellow);
         remainingHeaderPanel.add(remainingTableLabel, BorderLayout.WEST);
@@ -121,7 +127,7 @@ public class Dashboard {
                 column[0] = order.getId();
                 column[1] = order.getTableNum();
                 column[2] = foodItem.getName();
-                column[3] = foodItem.getQuantity();
+                column[3] = "x" + foodItem.getQuantity();
                 model.insertRow(rowIndex++, column);
             }
             String currTableNum = Integer.toString(order.getTableNum());
@@ -132,7 +138,8 @@ public class Dashboard {
         }
         System.out.println("TableNum: " + remainingList);
         System.out.println("Order ID: " + remainingID);
-        remainingTableLabel.setText(remainingList.toString());
+
+        updateRemainingHeaderPanel();
 
         for (int i = model.getRowCount() - 1; i >= rowIndex; i--) {
             model.removeRow(i);
@@ -153,12 +160,12 @@ public class Dashboard {
         final JLabel status = new JLabel();
         status.setText("<html><b>Status:</b> <font color='green'>Ready</font></html>");
         statusBarPanel.add(status);
-        /*root.addComponentListener(new ComponentAdapter() {
+        root.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
                 status.setText(root.getWidth() + "x" + root.getHeight());
             }
-        });*/
+        });
     }
 
     private void remainingHeaderPanelDecoration(){
@@ -168,7 +175,14 @@ public class Dashboard {
         servingText.setFont(new Font("Verdana", Font.BOLD,42));
         servingText.setForeground(Color.white);
         remainingHeaderPanel.add(servingText, BorderLayout.WEST);
+    }
 
+    private void updateRemainingHeaderPanel(){
+        if(remainingList.size() == 0){
+            remainingTableLabel.setText("No order left.");
+        } else {
+            remainingTableLabel.setText(remainingList.toString());
+        }
     }
 
     private void deleteOrder() {
@@ -178,15 +192,16 @@ public class Dashboard {
             return;
         }
 
-        final int idToDelete = (Integer) model.getValueAt(0, 0);
+        final int idToDelete = (Integer) model.getValueAt(table.getSelectedRow(), 0);
         dao.deleteOrder(idToDelete);
         int indexToRemove = remainingID.indexOf(idToDelete);
         remainingList.remove(indexToRemove);
         remainingID.remove(indexToRemove);
-        remainingTableLabel.setText(remainingList.toString());
 
-        while (((Integer) model.getValueAt(0,0)) == idToDelete) {
-            model.removeRow(0);
+        updateRemainingHeaderPanel();
+
+        while (((Integer) model.getValueAt(table.getSelectedRow(),0)) == idToDelete) {
+            model.removeRow(table.getSelectedRow());
         }
     }
 
