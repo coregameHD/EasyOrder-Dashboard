@@ -51,6 +51,9 @@ public class Dashboard {
         root = new JFrame("EasyOrder Dashboard");
         root.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         root.setPreferredSize(new Dimension(1366, 768));
+        root.setMinimumSize(new Dimension(1366, 768));
+        Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+        root.setLocation(dim.width/2-root.getSize().width/2, dim.height/2-root.getSize().height/2);
 
         table = new JTable();
         table.setFont(new Font("Tahoma", Font.PLAIN, 24));
@@ -123,7 +126,7 @@ public class Dashboard {
 
         int rowIndex = 0;
         for (Order order : dao.getAllOrder()) {
-            for (FoodItem foodItem : order.getFoods()) {
+            for (FoodItem foodItem : order.getFoodItems()) {
                 Object[] column = new Object[4];
                 column[0] = order.getId();
                 column[1] = foodItem.getName();
@@ -149,6 +152,11 @@ public class Dashboard {
 
     public void deleteOrder() {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+        if (model.getRowCount() == 0) {
+            return;
+        }
+
         int idToDelete = (Integer) model.getValueAt(0, 0);
         dao.deleteOrder(idToDelete);
         while (((Integer) model.getValueAt(0,0)) == idToDelete) {

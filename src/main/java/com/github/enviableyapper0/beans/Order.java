@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Order implements Serializable {
-    private List<FoodItem> foods;
+    private List<FoodItem> foodItems;
     private int id;
     private int tableNum;
 
@@ -13,13 +13,13 @@ public class Order implements Serializable {
     }
 
     public Order(int id, int tableNum) {
-        this.foods = new ArrayList<>();
+        this.foodItems = new ArrayList<>();
         this.id = id;
         this.tableNum = tableNum;
     }
 
-    public List<FoodItem> getFoods() {
-        return foods;
+    public List<FoodItem> getFoodItems() {
+        return foodItems;
     }
 
     public int getTableNum() {
@@ -41,7 +41,7 @@ public class Order implements Serializable {
     @Override
     public String toString() {
         return "Order{" +
-                "foods=" + foods +
+                "foodItems=" + foodItems +
                 ", id=" + id +
                 ", tableNum=" + tableNum +
                 '}';
