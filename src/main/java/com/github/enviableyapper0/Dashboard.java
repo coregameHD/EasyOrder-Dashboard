@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Dashboard {
     private class SpaceListener implements KeyListener {
@@ -53,6 +54,7 @@ public class Dashboard {
             return output;
         }
     };
+    private ArrayList<int[]> foodIndexArray = new ArrayList<>();
 
     public Dashboard(URI baseURI) {
         this.dao = new OrderDashboardDAO(baseURI);
@@ -63,6 +65,8 @@ public class Dashboard {
         root.setMinimumSize(new Dimension(1366, 768));
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         root.setLocation(dim.width/2-root.getSize().width/2, dim.height/2-root.getSize().height/2);
+
+
 
         // Status Bar
         statusBarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -77,6 +81,9 @@ public class Dashboard {
         table.setFillsViewportHeight(true);
         table.setDefaultEditor(Object.class, null);
         table.addKeyListener(new SpaceListener());
+
+
+
 
         // Remaining Header Panel
         remainingHeaderPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -119,25 +126,45 @@ public class Dashboard {
 
     private void updateTableModel() {
         DefaultTableModel model = ((DefaultTableModel) table.getModel());
-
         int rowIndex = 0;
+        int count = 1;
+        int[] foodIndexTempArray = new int[20];
         for (Order order : dao.getAllOrder()) {
             for (FoodItem foodItem : order.getFoodItems()) {
                 Object[] column = new Object[4];
                 column[0] = order.getId();
                 column[1] = order.getTableNum();
-                column[2] = foodItem.getName();
+                column[2] = count + ". " + foodItem.getName();
                 column[3] = "x" + foodItem.getQuantity();
                 model.insertRow(rowIndex++, column);
+                foodIndexTempArray[count-1] = count-1;
+                count++;
             }
-            String currTableNum = Integer.toString(order.getTableNum());
-            if (!remainingList.contains(currTableNum)){
-                remainingList.add(currTableNum);
+
+            // If current table number is not exist in remaining list
+            String currentTableNum = Integer.toString(order.getTableNum());
+            if (!remainingList.contains(currentTableNum)){
+                remainingList.add(currentTableNum);
                 remainingID.add(order.getId());
+                foodIndexArray.add(foodIndexTempArray);
+
+                //foodIndexTempArray.clear();
             }
+            // Reset counter
+            count = 1;
+            foodIndexTempArray = new int[foodIndexTempArray.length];
+
         }
         System.out.println("TableNum: " + remainingList);
         System.out.println("Order ID: " + remainingID);
+        System.out.println("Temp Array: " + Arrays.toString(foodIndexTempArray));
+        System.out.println("Food Index: " + foodIndexArray);
+
+        for (int[] item: foodIndexArray){
+            System.out.println(Arrays.toString(item) + "\t");
+        }
+        System.out.println("==========");
+
 
         updateRemainingHeaderPanel();
 
@@ -197,6 +224,7 @@ public class Dashboard {
         int indexToRemove = remainingID.indexOf(idToDelete);
         remainingList.remove(indexToRemove);
         remainingID.remove(indexToRemove);
+        foodIndexArray.remove(indexToRemove);
 
         updateRemainingHeaderPanel();
 
@@ -212,7 +240,7 @@ public class Dashboard {
             return;
         }
 
-        int idToDelete = (Integer) model.getValueAt(0, 0);
+        final int idToDelete = (Integer) model.getValueAt(table.getSelectedRow(), 0);
         int foodIndex = 1;
         dao.deleteIndividualFoodItem(idToDelete, foodIndex);
         while (((Integer) model.getValueAt(0,0)) == idToDelete) {
