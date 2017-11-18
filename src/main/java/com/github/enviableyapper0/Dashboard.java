@@ -11,6 +11,7 @@ import javax.swing.table.*;
 import javax.ws.rs.core.UriBuilder;
 import java.awt.*;
 import java.awt.event.*;
+import java.lang.reflect.Array;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +29,7 @@ public class Dashboard {
             if (e.getKeyCode() == spaceKeyCode) {
                 Dashboard.this.deleteIndividualFoodItem();
             }
-            else if (e.getKeyCode() == deleteKeyCode) {
+            if (e.getKeyCode() == deleteKeyCode) {
                 Dashboard.this.deleteOrder();
             }
         }
@@ -237,7 +238,7 @@ public class Dashboard {
         }
     }
 
-    public void deleteIndividualFoodItem(){
+    private void deleteIndividualFoodItem(){
         DefaultTableModel model = (DefaultTableModel) table.getModel();
 
         if (model.getRowCount() == 0) {
@@ -247,8 +248,21 @@ public class Dashboard {
         final int idToDelete = (Integer) model.getValueAt(table.getSelectedRow(), 0);
         int indexToRemove = remainingID.indexOf(idToDelete);
 
+        ArrayList<Integer> allItems = new ArrayList<>();
+        for (ArrayList<Integer> arr: foodIndexArray){
+            for (Integer i: arr){
+                allItems.add(i);
+            }
+        }
+        int beforePos = table.getRowCount() - table.getSelectedRow();
+        System.out.println(beforePos);
 
-        int foodIndex = 0;
+        int count = 0;
+        for (int i = 0; i < indexToRemove; i++){
+            count += foodIndexArray.get(i).size();
+        }
+
+        int foodIndex = allItems.get(count);
         dao.deleteIndividualFoodItem(idToDelete, foodIndex);
 
         foodIndexArray.get(indexToRemove).remove(foodIndex);
@@ -271,12 +285,11 @@ public class Dashboard {
     // Helper
     private void updateFoodIndexArray(int OuterArrayIndex){
         int limit = foodIndexArray.get(OuterArrayIndex).size();
-        if (limit > 1){
+        if (limit >= 1){
             for (int i = 0; i < limit; i++){
                 foodIndexArray.get(OuterArrayIndex).set(i, i);
             }
         }
-
     }
 
     public static void main(String[] args) {
