@@ -8,6 +8,16 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import java.net.URI;
 
+/*---------------------------------------------------------------------------------
+
+	EasyOrder Dashboard DAO
+
+-----------------------------------------------------------------------------------
+
+    Lorem Ipsum
+
+----------------------------------------------------------------------------------- */
+
 public class OrderDashboardDAO {
     private Client client;
     private WebTarget target;
