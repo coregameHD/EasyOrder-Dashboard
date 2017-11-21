@@ -1,7 +1,7 @@
 # EasyOrder Dashboard
 A server dashboard application for kitchen and internal uses.
 
-![EasyOrder](https://raw.githubusercontent.com/maxmacstn/EasyOrder-Android-Client/master/images/git_header1.png?token=AS27iSJKiGgsbMpqo2Xk1E9-zi4Gvg70ks5aHOYowA%3D%3D)
+![EasyOrder](https://i.imgur.com/OLhS2BF.jpg)
 
 # What is EasyOrder?
 This project aims to create both client and server application to help restaurant employees keep track of their order. We also provide a dashboard that can be used by employees and customers alike.
